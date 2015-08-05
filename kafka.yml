@@ -1,0 +1,25 @@
+zk:
+  image: wurstmeister/zookeeper:latest
+  ports:
+  - "2182:2181"
+data:
+  image: busybox
+  volumes:
+    - /kafka
+config:
+  image: kafka-config
+  volumes-from:
+  - kafka-data
+  environment:
+  - KAFKA_CONFIG_BROKER_ID: 0
+  - KAFKA_CONFIG_ZOOKEEPER: zk:2181
+  env_file:
+  - ./kafka0.onv
+broker:
+  image: kafka:latest
+  ports:
+  - "9092"
+  links:
+  - zk
+  volumes-from:
+  - data
